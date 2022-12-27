@@ -8,9 +8,11 @@ Renderer::Renderer(const std::size_t screen_width,
     : screen_width(screen_width),
       screen_height(screen_height),
       grid_width(grid_width),
-      grid_height(grid_height) {
+      grid_height(grid_height)
+{
   // Initialize SDL
-  if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+  if (SDL_Init(SDL_INIT_VIDEO) < 0)
+  {
     std::cerr << "SDL could not initialize.\n";
     std::cerr << "SDL_Error: " << SDL_GetError() << "\n";
   }
@@ -20,25 +22,29 @@ Renderer::Renderer(const std::size_t screen_width,
                                 SDL_WINDOWPOS_CENTERED, screen_width,
                                 screen_height, SDL_WINDOW_SHOWN);
 
-  if (nullptr == sdl_window) {
+  if (nullptr == sdl_window)
+  {
     std::cerr << "Window could not be created.\n";
     std::cerr << " SDL_Error: " << SDL_GetError() << "\n";
   }
 
   // Create renderer
   sdl_renderer = SDL_CreateRenderer(sdl_window, -1, SDL_RENDERER_ACCELERATED);
-  if (nullptr == sdl_renderer) {
+  if (nullptr == sdl_renderer)
+  {
     std::cerr << "Renderer could not be created.\n";
     std::cerr << "SDL_Error: " << SDL_GetError() << "\n";
   }
 }
 
-Renderer::~Renderer() {
+Renderer::~Renderer()
+{
   SDL_DestroyWindow(sdl_window);
   SDL_Quit();
 }
 
-void Renderer::Render(Snake const snake, SDL_Point const &food) {
+void Renderer::Render(Snake const snake, SDL_Point const &food)
+{
   SDL_Rect block;
   block.w = screen_width / grid_width;
   block.h = screen_height / grid_height;
@@ -54,19 +60,23 @@ void Renderer::Render(Snake const snake, SDL_Point const &food) {
   SDL_RenderFillRect(sdl_renderer, &block);
 
   // Render snake's body
-  SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-  for (SDL_Point const &point : snake.body) {
-    block.x = point.x * block.w;
-    block.y = point.y * block.h;
-    SDL_RenderFillRect(sdl_renderer, &block);
-  }
+  // SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+  // for (SDL_Point const &point : snake.body) {
+  //   block.x = point.x * block.w;
+  //   block.y = point.y * block.h;
+  //   SDL_RenderFillRect(sdl_renderer, &block);
+  // }
+  RenderBody(snake, block);
 
   // Render snake's head
-  block.x = static_cast<int>(snake.head_x) * block.w;
-  block.y = static_cast<int>(snake.head_y) * block.h;
-  if (snake.alive) {
+  block.x = static_cast<int>(snake.GetHead().x) * block.w;
+  block.y = static_cast<int>(snake.GetHead().y) * block.h;
+  if (snake.IsAlive())
+  {
     SDL_SetRenderDrawColor(sdl_renderer, 0x00, 0x7A, 0xCC, 0xFF);
-  } else {
+  }
+  else
+  {
     SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0x00, 0x00, 0xFF);
   }
   SDL_RenderFillRect(sdl_renderer, &block);
@@ -75,7 +85,87 @@ void Renderer::Render(Snake const snake, SDL_Point const &food) {
   SDL_RenderPresent(sdl_renderer);
 }
 
-void Renderer::UpdateWindowTitle(int score, int fps) {
+void Renderer::UpdateWindowTitle(int score, int fps)
+{
   std::string title{"Snake Score: " + std::to_string(score) + " FPS: " + std::to_string(fps)};
   SDL_SetWindowTitle(sdl_window, title.c_str());
+}
+Renderer::Direction Renderer::Oriented(int x1, int y1, int x2, int y2)
+{
+  if (x1 == x2)
+  {
+    if (y1 > y2)
+    {
+      return Direction::kUp;
+    }
+    else
+    {
+      return Direction::kDown;
+    }
+  }
+  else
+  {
+    if (x1 > x2)
+    {
+      return Direction::kLeft;
+    }
+    else
+    {
+      return Direction::kRight;
+    }
+  }
+}
+
+Renderer::Direction Renderer::Oriented(SDL_Point p1, SDL_Point p2)
+{   // p1 is predecessor
+    if (p1.y < p2.y)
+        return Direction::kUp;
+    else
+        if (p1.y > p2.y)
+            return Direction::kDown;
+        else
+            if (p1.x < p2.x)
+                return Direction::kLeft;
+            else
+                return Direction::kRight;
+    return Direction::kDown;
+
+}
+
+void Renderer::RenderBlock(Direction dir, int x, int y, SDL_Rect &block)
+{
+  block.x = x * block.w;
+  block.y = y * block.h;
+  switch (dir)
+  {
+  case Direction::kUp:
+    SDL_SetRenderDrawColor(sdl_renderer, 0x00, 0x7A, 0xCC, 0xFF);
+    break;
+  case Direction::kDown:
+    SDL_SetRenderDrawColor(sdl_renderer, 0x00, 0x7A, 0xCC, 0xFF);
+    break;
+  case Direction::kLeft:
+    SDL_SetRenderDrawColor(sdl_renderer, 0x00, 0x7A, 0xCC, 0xFF);
+    break;
+  case Direction::kRight:
+    SDL_SetRenderDrawColor(sdl_renderer, 0x00, 0x7A, 0xCC, 0xFF);
+    break;
+  }
+  SDL_RenderFillRect(sdl_renderer, &block);
+}
+void Renderer::RenderBody(Snake const snake, SDL_Rect &block)
+{
+
+  Direction orientation;
+  const std::vector<SDL_Point> &body = snake.GetBody();
+  int x = static_cast<int>(snake.GetHead().x);
+  int y = static_cast<int>(snake.GetHead().y);
+  SDL_SetRenderDrawColor(sdl_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+  orientation = Oriented(x, y, body.back().x, body.back().y);
+  RenderBlock(orientation, body.back().x, body.back().y, block);
+  for (auto point = body.rbegin() + 1; point != body.rend(); point++)
+  {
+    orientation = Oriented(*(point - 1), *point);
+    RenderBlock(orientation, point->x, point->y, block);
+  }
 }
