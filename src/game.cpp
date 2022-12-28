@@ -68,6 +68,7 @@ void Game::PlaceFood()
     {
       food.x = x;
       food.y = y;
+      // std::cout << "food placed at : " << x << "," << y << std::endl;
       return;
     }
   }
@@ -90,7 +91,6 @@ void Game::Update()
     PlaceFood();
     // Grow snake and increase speed.
     snake.GrowBody();
-    // snake.speed += 0.02;
     if (snake.SizeInBounds(25, 35))
     {
       snake.ScaleSpeed(0.95);

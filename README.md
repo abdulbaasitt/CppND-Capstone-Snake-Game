@@ -34,9 +34,9 @@ The original Snake game has been modified in the following ways using the knowle
 
 ## Rubrics Fulfilled
 
-The project demonstrates an understanding of C++ loops, functions, and input/output (I/O). This can be seen in the file "renderer.cpp" on line 93, 119, 135 in which useful new functions were created to modularize the code flow. The project also accepts user input and process it, this was achieved by making changes to the "change Direction Function" in snake.cpp on Line 224. This function changes the direction of a Snake object and restores the original direction if the new direction takes the Snake out of bounds.
+The project demonstrates an understanding of C++ loops, functions, and input/output (I/O). This can be seen in the file "renderer.cpp" on line 95, 117, 139 in which useful new functions were created to modularize the code flow. The project also accepts user input and process it, this was achieved by making changes to the "change Direction Function" in snake.cpp on Line 227. This function changes the direction of a Snake object and restores the original direction if the new direction takes the Snake out of bounds.
 
-The project employs object-oriented programming (OOP) techniques, as seen in the use of classes in every file except "main.cpp". These classes utilize appropriate access specifiers for their class members and encapsulate behavior, abstracting implementation details from their interfaces. Examples of using appropriate access specifiers can be found in snake.h on Line 35-48. The default data member in the starter code were public. All the data member in Snake are now private with access through getters and setters. This is also the same for behavior Encapsulation.
+The project employs object-oriented programming (OOP) techniques, as seen in the use of classes in every file except "main.cpp". These classes utilize appropriate access specifiers for their class members and encapsulate behavior, abstracting implementation details from their interfaces. Examples of using appropriate access specifiers can be found in snake.h on Line 42-54. The default data member in the starter code were public. All the data member in Snake are now private with access through getters and setters. This is also the same for behavior Encapsulation.
 
 
 ## Basic Build Instructions

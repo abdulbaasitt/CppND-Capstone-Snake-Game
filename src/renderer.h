@@ -7,7 +7,8 @@
 
 class Renderer {
  public:
- enum class Direction { kUp, kDown, kLeft, kRight };
+     enum class Direction { kUp, kDown, kLeft, kRight };
+
   Renderer(const std::size_t screen_width, const std::size_t screen_height,
            const std::size_t grid_width, const std::size_t grid_height);
   ~Renderer();
